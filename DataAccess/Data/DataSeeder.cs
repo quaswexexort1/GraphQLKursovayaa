@@ -1,7 +1,6 @@
 ﻿namespace GraphQLKursovayaa.DataAccess.Data
 {
-    public class Query
+    public class DataSeeder
     {
-
     }
 }
