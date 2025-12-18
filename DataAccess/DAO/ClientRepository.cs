@@ -25,6 +25,14 @@ namespace GraphQLKursovayaa.DataAccess.DAO
                 .ToList();
         }
 
+        public async Task<Client> GetClientById(int id)
+        {
+            return await _context.Clients
+                .Include(c => c.Cases)
+                .ThenInclude(c => c.Advokats)
+                .FirstOrDefaultAsync(c => c.ClientId == id);
+        }
+
         public async Task<Client> CreateClient(Client client)
         {
             await _context.Clients.AddAsync(client);
