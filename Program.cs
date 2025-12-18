@@ -12,7 +12,7 @@ builder.Services.AddDbContext<SampleAppDbContext>(options => options.UseSqlServe
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddGraphQLServer().AddQueryType<Query>().
-    AddMutationType<Mutation>().AddSubscriptionType<Subscription>().AddInMemorySubscriptions();
+    AddMutationType<Mutation>().AddSubscriptionType<Subscriprtion>().AddInMemorySubscriptions();
 builder.Services.AddScoped<ActionRepository, ActionRepository>();
 builder.Services.AddScoped<AdvokatRepository, AdvokatRepository>();
 builder.Services.AddScoped<CaseRepository, CaseRepository>();

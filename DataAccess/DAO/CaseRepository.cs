@@ -38,6 +38,15 @@ namespace GraphQLKursovayaa.DataAccess.DAO
                 .ToList();
         }
 
+        public async Task<Case> GetCaseByIdAsync(int id)
+        {
+            return await _context.Cases
+                .Include(c => c.Client)
+                .Include(c => c.Advokats)
+                .Include(c => c.Actions)
+                .FirstOrDefaultAsync(c => c.CaseId == id);
+        }
+
         public async Task<Case> CreateCase(Case caseItem)
         {
             await _context.Cases.AddAsync(caseItem);

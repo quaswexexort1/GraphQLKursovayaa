@@ -35,6 +35,12 @@ namespace GraphQLKursovayaa.DataAccess.DAO
                 .SelectMany(l => l.Cases)
                 .ToList();
         }
+        public async Task<Advokat> GetAdvokatByIdAsync(int id)
+        {
+            return await _context.Advokats
+                .Include(a => a.Cases)
+                .FirstOrDefaultAsync(a => a.AdvokatId == id);
+        }
 
         public async Task<Advokat> CreateAdvokat(Advokat advokat)
         {
