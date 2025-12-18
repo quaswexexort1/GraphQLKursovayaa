@@ -60,7 +60,7 @@ namespace GraphQLKursovayaa.DataAccess.Data
                         PremiumPercent = (decimal)(Faker.RandomNumber.Next(10, 50) / 100.0), // 10-50%
                         IsWon = _random.Next(2) == 1,
                         StartDate = DateTime.Now.AddDays(Faker.RandomNumber.Next(1, 365)),
-                        EndDate = RandomNumber.Next(0, 1) == 1 ? DateTime.Now.AddDays(Faker.RandomNumber.Next(1, 30)) : null,
+                        EndDate = _random.Next(0, 1) == 1 ? DateTime.Now.AddDays(_random.Next(1, 30)) : null,
                         ClientId = client.ClientId
                     };
                     db.Cases.Add(caseItem);
@@ -82,7 +82,8 @@ namespace GraphQLKursovayaa.DataAccess.Data
                         Description = Lorem.Sentence(5),
                         Cost = (decimal)(Faker.RandomNumber.Next(1000, 50000) / 100.0),
                         IsCompleted = _random.Next(2) == 1,
-                        DatePerformed = DateTime.Now.AddDays(Faker.RandomNumber.Next(1, 90)),
+                        DatePerformed = DateTime.Now.AddDays(-Faker.RandomNumber.Next(1, 90)),
+                        EndDate = _random.Next(10) == 1 ? DateTime.Now.AddDays(-_random.Next(1, 30)) : null,
                         CaseId = caseItem.CaseId
                     });
                 }

@@ -20,6 +20,7 @@ namespace GraphQLKursovayaa.DataAccess.Entity
 
 
         public DateTime DatePerformed { get; set; }         // Дата выполнения действия
+        public DateTime? EndDate { get; set; }
         public int CaseId { get; set; }                 // Fk
         public virtual Case Case { get; set; }         // дело, к которому относится действие
 
