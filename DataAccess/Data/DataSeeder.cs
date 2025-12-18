@@ -34,7 +34,7 @@ namespace GraphQLKursovayaa.DataAccess.Data
                     {
                         Name = Name.FullName(),
                         Specialization = Lorem.Sentence(),
-                        LicenseNumber = "asd" + Faker.RandomNumber.Next(100000, 100000000),
+                        LicenseNumber = "LIC-" + Faker.RandomNumber.Next(100000, 100000000),
                         HourlyRate = Faker.RandomNumber.Next(1000, 5000)
                     });
                 }
