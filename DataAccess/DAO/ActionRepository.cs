@@ -29,6 +29,13 @@ namespace GraphQLKursovayaa.DataAccess.DAO
                 .ThenInclude(c => c.Client)
                 .ToList();
         }
+        public async Task<Entity.Action?> GetActionByIdAsync(int id)
+        {
+            return await _context.Actions
+                .Include(a => a.Case)
+                .ThenInclude(c => c.Client)
+                .FirstOrDefaultAsync(a => a.ActionId == id);
+        }
 
         public List<Entity.Action> GetCompletedActionsByCase(int caseId)
         {
