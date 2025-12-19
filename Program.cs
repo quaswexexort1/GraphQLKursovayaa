@@ -1,9 +1,6 @@
 using GraphQLKursovayaa.DataAccess.Data;
 using GraphQLKursovayaa.DataAccess.Entity;
 using GraphQLKursovayaa.DataAccess.DAO;
-using HotChocolate.Execution;
-using HotChocolate.Execution.Processing;
-using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +21,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors(cors => cors
+.AllowAnyMethod()
+.AllowAnyHeader()
+.SetIsOriginAllowed(origin => true)
+.AllowCredentials());
 app.UseWebSockets();
 using (var scope = app.Services.CreateScope())
 {
