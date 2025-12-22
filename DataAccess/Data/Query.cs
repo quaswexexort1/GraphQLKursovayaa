@@ -62,8 +62,22 @@ namespace GraphQLKursovayaa.DataAccess.Data
                 await eventSender.SendAsync("CaseReturned", caseItem);
             return caseItem;
         }
+        public async Task<Entity.Action?> ActionById(
+    [Service] ActionRepository actionRepository,
+    int id)
+        {
+            return await actionRepository.GetActionByIdAsync(id);
+        }
+
+        public async Task<Client> ClientById(
+    [Service] ClientRepository clientRepository,
+    int id)
+        {
+            return await clientRepository.GetClientById(id);
+        }
 
         public List<Advokat> AdvokatsByCase([Service] CaseRepository caseRepository, int caseId)
             => caseRepository.GetAdvokatsByCase(caseId);
+
     }
 }
