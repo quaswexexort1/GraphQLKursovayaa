@@ -52,7 +52,7 @@ namespace GraphQLKursovayaa.DataAccess.DAO
             return action;
         }
 
-        public async Task<Entity.Action> UpdateAction(Entity.Action action)
+        public async Task<Entity.Action> EditAction(Entity.Action action)
         {
             _context.Actions.Update(action);
             await _context.SaveChangesAsync();

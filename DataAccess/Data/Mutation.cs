@@ -199,7 +199,7 @@ namespace GraphQLKursovayaa.DataAccess.Data
             return createdAction;
         }
 
-        public async Task<Entity.Action?> UpdateAction(
+        public async Task<Entity.Action?> EditAction(
            [Service] ActionRepository actionRepository,
            [Service] ITopicEventSender eventSender,
            int id,
@@ -226,7 +226,7 @@ namespace GraphQLKursovayaa.DataAccess.Data
                 action.IsCompleted = isCompleted;
             }
 
-            var updated = await actionRepository.UpdateAction(action);
+            var updated = await actionRepository.EditAction(action);
             await eventSender.SendAsync("ActionUpdated", updated);
             return updated;
         }
