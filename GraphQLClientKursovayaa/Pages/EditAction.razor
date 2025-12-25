@@ -1,0 +1,66 @@
+﻿@page "/EditAction/{Id:int}"
+@using GraphQLClientKursovayaa.DataAccess
+@using GraphQLClientKursovayaa.DataAccess.Model
+@using System.Globalization
+
+@inject NavigationManager NavigationManager
+<h3>Редактирование действия</h3>
+<EditForm Model="@action" OnValidSubmit="@EditButtonClick">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        Заголовок:<InputText id="title" @bind-Value="action.Title"
+                             class="form-control" />
+    </div>
+    <div class="form-group">
+        Описание:<InputText id="description" @bind-Value="action.Description"
+                            class="form-control" />
+    </div>
+    <div class="form-group">
+        Стоимость:<InputNumber id="cost" @bind-Value="action.Cost"
+                               class="form-control" />
+    </div>
+    <div class="form-group">
+        Завершено:<InputCheckbox id="isCompleted" @bind-Value="action.IsCompleted"
+                                 class="form-check-input" />
+    </div>
+    <button type="submit" class="btn btn-success">Сохранить</button>
+</EditForm>
+<a href="/ActionView">Назад</a>
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    private DataAccess.Model.Action action = new DataAccess.Model.Action();
+    protected override async Task OnInitializedAsync()
+    {
+        string completeQuery = "query{actionById(id:" + Id + "){actionId,title,description,cost,isCompleted}}";
+        string qraphQLQueryType = "actionById";
+        var result = await Query.ExceuteQueryAsyn<DataAccess.Model.Action>(qraphQLQueryType, completeQuery);
+        if (result == null)
+        {
+            NavigationManager.NavigateTo($"ActionView");
+        }
+        action = result!;
+    }
+    private async Task EditButtonClick()
+    {
+        try
+        {
+            string query =
+                "mutation{editAction(" +
+                    "id:" + action.ActionId + "," +           
+                    "title:\"" + action.Title + "\"," +
+                    "description:\"" + action.Description + "\"," +
+                    "cost:" + action.Cost.ToString(CultureInfo.InvariantCulture) + "," +
+                    "isCompleted:" + action.IsCompleted.ToString().ToLower() +
+                "){actionId,title}}";
+            string graphQLQueryType = "editAction";
+            await Mutation.ExceuteMutationAsyn<CreateActionReturnModel>(graphQLQueryType, query);
+            NavigationManager.NavigateTo($"ActionView");
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}

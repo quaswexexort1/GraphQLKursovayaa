@@ -1,0 +1,91 @@
+﻿@page "/ClientDetails/{Id:int}"
+@using GraphQLClientKursovayaa.DataAccess
+@using GraphQLClientKursovayaa.DataAccess.Model
+@inject NavigationManager NavigationManager
+
+<h3>Информация о клиенте</h3>
+
+@if (client is null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <h4>@client.Name</h4>
+
+    <p>
+        Телефон: @client.Phone<br />
+        Email: @client.Email<br />
+        Адрес: @client.Address
+    </p>
+
+    <h5>Дела клиента</h5>
+
+    @if (client.Cases is { Count: > 0 })
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Номинал</th>
+                    <th>Выиграно</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in client.Cases)
+                {
+                    <tr>
+                        <td>@c.Title</td>
+                        <td>@c.NominalCost</td>
+                        <td>@(c.IsWon ? "Да" : "Нет")</td>
+                        <td>
+                            <a class="btn btn-sm btn-primary"
+                               href="@($"/CaseDetails/{c.CaseId}")">
+                                Открыть
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Дел пока нет.</p>
+    }
+
+    <button class="btn btn-secondary"
+            @onclick="@(() => NavigationManager.NavigateTo("ClientView"))">
+        Назад к списку клиентов
+    </button>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Client? client;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string query =
+            "query{" +
+                "clientById(id:" + Id + "){" +
+                    "clientId,name,phone,email,address," +
+                    "cases{caseId,title,nominalCost,isWon}" +
+                "}" +
+            "}";
+
+        string graphQLQueryType = "clientById";
+
+        var result = await Query.ExceuteQueryAsyn<Client>(graphQLQueryType, query);
+
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("ClientView", forceLoad: true);
+            return;
+        }
+
+        client = result;
+    }
+}

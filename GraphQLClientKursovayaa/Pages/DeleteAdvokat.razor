@@ -1,0 +1,76 @@
+﻿@page "/DeleteAdvokat/{Id:int}"
+@using GraphQLClientKursovayaa.DataAccess
+@using GraphQLClientKursovayaa.DataAccess.Model
+
+@inject NavigationManager NavigationManager
+<h3>Удаление адвоката</h3>
+@if (advokatModel.Name == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h2>@advokatModel.Name</h2>
+
+    <div>
+        <div>
+            Специализация:<span style="font-size:large">@advokatModel.Specialization</span>
+            <br />
+        </div>
+
+        <div>
+            Номер лицензии: <span style="font-size:large">@advokatModel.LicenseNumber</span>
+            <br />
+        </div>
+
+        <div>
+            Почасовая ставка: <span style="font-size:large">@advokatModel.HourlyRate</span>
+            <br />
+        </div>
+
+        <div>
+            <span class="alert-danger">Вы действительно удалить @advokatModel.Name?</span>
+            <br />
+        </div>
+        <div>
+            <button class="btn btn-primary" @onclick="Delete">Да</button>
+            <button class="btn btn-secondary" @onclick="Back">Нет</button>
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    private Advokat advokatModel = new Advokat();
+    protected override async Task OnInitializedAsync()
+    {
+        string completeQuery = "query{advokatById(id:" + Id + "){advokatId,name,specialization,licenseNumber,hourlyRate}}";
+        string qraphQLQueryType = "advokatById";
+        var result = await Query.ExceuteQueryAsyn<Advokat>(qraphQLQueryType, completeQuery);
+        if (result == null)
+        {
+            NavigationManager.NavigateTo($"AdvokatView");
+        }
+        advokatModel = result!;
+    }
+    private void Back()
+    {
+        NavigationManager.NavigateTo($"AdvokatView");
+    }
+    private async Task Delete()
+    {
+        try
+        {
+            string query = $"mutation{{deleteAdvokat(id:{Id})}}";
+            string graphQLQueryType = "deleteAdvokat";
+
+            _ = await Mutation.ExceuteMutationAsyn<object>(graphQLQueryType, query);
+
+            NavigationManager.NavigateTo("AdvokatView", forceLoad: true);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}

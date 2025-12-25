@@ -1,0 +1,74 @@
+﻿@page "/EditAdvokat/{Id:int}"
+@using GraphQLClientKursovayaa.DataAccess
+@using GraphQLClientKursovayaa.DataAccess.Model
+
+@inject NavigationManager NavigationManager
+<h3>Редактирование адвоката</h3>
+<EditForm Model="@advokat" OnValidSubmit="@EditButtonClick">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        Имя:<InputText id="name" @bind-Value="advokat.Name"
+                       class="form-control" />
+    </div>
+    <div class="form-group">
+        Специализация:<InputText id="specialization" @bind-Value="advokat.Specialization"
+                                 class="form-control" />
+    </div>
+    <div class="form-group">
+        Номер лицензии:<InputText id="licenseNumber" @bind-Value="advokat.LicenseNumber"
+                                  class="form-control" />
+    </div>
+    <div class="form-group">
+        Почасовая ставка:<InputNumber id="hourlyRate" @bind-Value="advokat.HourlyRate"
+                                      class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Сохранить</button>
+</EditForm>
+<a href="/AdvokatView">Назад</a>
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    private Advokat advokat = new Advokat();
+    protected override async Task OnInitializedAsync()
+    {
+        string completeQuery = "query{advokatById(id:" + Id + "){advokatId,name,specialization,licenseNumber,hourlyRate}}";
+        string qraphQLQueryType = "advokatById";
+        var result = await Query.ExceuteQueryAsyn<Advokat>(qraphQLQueryType, completeQuery);
+        if (result == null)
+        {
+            NavigationManager.NavigateTo($"AdvokatView");
+        }
+        advokat = result!;
+    }
+    private async Task EditButtonClick()
+    {
+        try
+        {
+            string query =
+                "mutation{" +
+                    "updateAdvokat(" +
+                        "id:" + advokat.AdvokatId + "," +
+                        "name:\"" + advokat.Name + "\"," +
+                        "specialization:\"" + advokat.Specialization + "\"," +
+                        "licenseNumber:\"" + advokat.LicenseNumber + "\"," +
+                        "hourlyRate:" + advokat.HourlyRate.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                    "){" +
+                        "advokatId,name" +
+                    "}" +
+                "}";
+
+            string graphQLQueryType = "updateAdvokat";
+
+            _ = await Mutation.ExceuteMutationAsyn<object>(
+                graphQLQueryType, query);
+
+            NavigationManager.NavigateTo("AdvokatView", forceLoad: true);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+}

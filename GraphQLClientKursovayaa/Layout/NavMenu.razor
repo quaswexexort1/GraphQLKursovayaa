@@ -1,0 +1,55 @@
+﻿<div class="container-fluid d-flex justify-content-between align-items-center">
+    <a class="navbar-brand" href="">Адвокатская контора</a>
+
+    <button title="Бургер-меню"
+            class="navbar-toggler ms-auto"
+            @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="nav flex-column main-nav">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Главная
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="ActionView">
+                <span aria-hidden="true"><i class="bi bi-play-circle"></i></span> Действия
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="AdvokatView">
+                <span aria-hidden="true"><i class="bi bi-person-badge"></i></span> Адвокаты
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="CaseView">
+                <span aria-hidden="true"><i class="bi bi-folder"></i></span> Дела
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="ClientView">
+                <span aria-hidden="true"><i class="bi bi-person-check"></i></span> Клиенты
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

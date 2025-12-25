@@ -1,0 +1,86 @@
+﻿@page "/DeleteCase/{Id:int}"
+@using GraphQLClientKursovayaa.DataAccess
+@using GraphQLClientKursovayaa.DataAccess.Model
+
+@inject NavigationManager NavigationManager
+<h3>Удаление дела</h3>
+@if (caseModel.Title == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h2>@caseModel.Title</h2>
+
+    <div>
+        <div>
+            Описание:<span style="font-size:large">@caseModel.Description</span>
+            <br />
+        </div>
+
+        <div>
+            Номинальная стоимость: <span style="font-size:large">@caseModel.NominalCost</span>
+            <br />
+        </div>
+
+        <div>
+            Процент премии: <span style="font-size:large">@caseModel.PremiumPercent</span>
+            <br />
+        </div>
+
+        <div>
+            Выиграно: <span style="font-size:large">@caseModel.IsWon</span>
+            <br />
+        </div>
+
+        <div>
+            Дата начала: <span style="font-size:large">@caseModel.StartDate</span>
+            <br />
+        </div>
+
+        <div>
+            <span class="alert-danger">Вы действительно удалить @caseModel.Title?</span>
+            <br />
+        </div>
+        <div>
+            <button class="btn btn-primary" @onclick="Delete">Да</button>
+            <button class="btn btn-secondary" @onclick="Back">Нет</button>
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    private Case caseModel = new Case();
+    protected override async Task OnInitializedAsync()
+    {
+        string completeQuery = "query{caseById(id:" + Id + "){caseId,title,description,nominalCost,premiumPercent,isWon,startDate}}";
+        string qraphQLQueryType = "caseById";
+        var result = await Query.ExceuteQueryAsyn<Case>(qraphQLQueryType, completeQuery);
+        if (result == null)
+        {
+            NavigationManager.NavigateTo($"CaseView");
+        }
+        caseModel = result!;
+    }
+    private void Back()
+    {
+        NavigationManager.NavigateTo($"CaseView");
+    }
+    private async Task Delete()
+    {
+        try
+        {
+            string query = $"mutation{{deleteCase(id:{Id})}}";
+            string graphQLQueryType = "deleteCase";
+
+            _ = await Mutation.ExceuteMutationAsyn<object>(graphQLQueryType, query);
+
+            NavigationManager.NavigateTo("CaseView", forceLoad: true);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}

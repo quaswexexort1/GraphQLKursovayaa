@@ -1,0 +1,80 @@
+﻿@page "/CreateAdvokat"
+
+@using GraphQLClientKursovayaa.DataAccess
+@using GraphQLClientKursovayaa.DataAccess.Model
+
+@inject NavigationManager NavigationManager
+
+<h3>Создание адвоката</h3>
+
+<div class="row">
+    <EditForm Model="@createAdvokat" OnValidSubmit="@CreateButtonClick">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            Имя:
+            <InputText @bind-Value="createAdvokat.Name"
+                       class="form-control" />
+        </div>
+
+        <div class="form-group">
+            Специализация:
+            <InputText @bind-Value="createAdvokat.Specialization"
+                       class="form-control" />
+        </div>
+
+        <div class="form-group">
+            Номер лицензии:
+            <InputText @bind-Value="createAdvokat.LicenseNumber"
+                       class="form-control" />
+        </div>
+
+        <div class="form-group">
+            Почасовая ставка:
+            <InputNumber @bind-Value="createAdvokat.HourlyRate"
+                         class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-success">Создать</button>
+    </EditForm>
+</div>
+
+<a href="/AdvokatView"><i class="bi bi-backspace"></i></a>
+
+@code {
+    private CreateAdvokatReturnModel createAdvokatReturnModel =
+        new CreateAdvokatReturnModel();
+    private CreateAdvokatModel createAdvokat =
+        new CreateAdvokatModel();
+
+    private async Task CreateButtonClick()
+    {
+        try
+        {
+            string query =
+                "mutation{" +
+                "createAdvokat(" +
+                    "name:\"" + createAdvokat.Name + "\"," +
+                    "specialization:\"" + createAdvokat.Specialization + "\"," +
+                    "licenseNumber:\"" + createAdvokat.LicenseNumber + "\"," +
+                    "hourlyRate:" + createAdvokat.HourlyRate +
+                "){" +
+                    "advokatId,name" +
+                "}" +
+                "}";
+
+            string graphQLQueryType = "createAdvokat";
+
+            var result = await Mutation.ExceuteMutationAsyn<CreateAdvokatReturnModel>(
+                graphQLQueryType, query);
+
+            createAdvokatReturnModel = result;
+            NavigationManager.NavigateTo("AdvokatView");
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}

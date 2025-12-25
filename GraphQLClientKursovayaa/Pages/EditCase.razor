@@ -1,0 +1,87 @@
+﻿@page "/EditCase/{Id:int}"
+@using GraphQLClientKursovayaa.DataAccess
+@using GraphQLClientKursovayaa.DataAccess.Model
+
+@inject NavigationManager NavigationManager
+<h3>Редактирование дела</h3>
+<EditForm Model="@caseModel" OnValidSubmit="@EditButtonClick">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        Название:<InputText id="title" @bind-Value="caseModel.Title"
+                            class="form-control" />
+    </div>
+    <div class="form-group">
+        Описание:<InputText id="description" @bind-Value="caseModel.Description"
+                            class="form-control" />
+    </div>
+    <div class="form-group">
+        Номинальная стоимость:<InputNumber id="nominalCost" @bind-Value="caseModel.NominalCost"
+                                           class="form-control" />
+    </div>
+    <div class="form-group">
+        Процент премии:<InputNumber id="premiumPercent" @bind-Value="caseModel.PremiumPercent"
+                                    class="form-control" />
+    </div>
+    <div class="form-group">
+        Выиграно:<InputCheckbox id="isWon" @bind-Value="caseModel.IsWon"
+                                class="form-check-input" />
+    </div>
+    <div class="form-group">
+        Дата начала:<InputDate id="startDate" @bind-Value="caseModel.StartDate"
+                               class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Сохранить</button>
+</EditForm>
+<a href="/CaseView">Назад</a>
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    private Case caseModel = new Case();
+    protected override async Task OnInitializedAsync()
+    {
+        string completeQuery = "query{caseById(id:" + Id + "){caseId,title,description,nominalCost,premiumPercent,isWon,startDate}}";
+        string qraphQLQueryType = "caseById";
+        var result = await Query.ExceuteQueryAsyn<Case>(qraphQLQueryType, completeQuery);
+        if (result == null)
+        {
+            NavigationManager.NavigateTo($"CaseView");
+        }
+        caseModel = result!;
+    }
+    private async Task EditButtonClick()
+    {
+        try
+        {
+
+            string query =
+                "mutation{" +
+                    "updateCase(" +
+                        "id:" + caseModel.CaseId + "," +
+                        "title:\"" + caseModel.Title + "\"," +
+                        "description:\"" + caseModel.Description + "\"," +
+                        "nominalCost:" + caseModel.NominalCost.ToString(System.Globalization.CultureInfo.InvariantCulture) + "," +
+                        "premiumPercent:" + caseModel.PremiumPercent.ToString(System.Globalization.CultureInfo.InvariantCulture) + "," +
+                        "isWon:" + caseModel.IsWon.ToString().ToLower() +
+                    "){" +
+                        "caseId,title" +
+                    "}" +
+                "}";
+
+
+            string graphQLQueryType = "updateCase";
+
+            await Mutation.ExceuteMutationAsyn<CreateCaseReturnModel>(
+                graphQLQueryType, query);
+
+            NavigationManager.NavigateTo("CaseView");
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    }
+}
+    

@@ -1,0 +1,81 @@
+﻿@page "/CreateAction"
+
+@using GraphQLClientKursovayaa.DataAccess
+@using GraphQLClientKursovayaa.DataAccess.Model
+
+@inject NavigationManager NavigationManager
+
+<h3>Создание действия</h3>
+
+<div class="row">
+    <EditForm Model="@createAction" OnValidSubmit="@CreateButtonClick">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            Заголовок:
+            <InputText @bind-Value="createAction.Title"
+                       class="form-control" />
+        </div>
+
+        <div class="form-group">
+            Описание:
+            <InputText @bind-Value="createAction.Description"
+                       class="form-control" />
+        </div>
+
+        <div class="form-group">
+            Стоимость:
+            <InputNumber @bind-Value="createAction.Cost"
+                         class="form-control" />
+        </div>
+
+        <div class="form-group">
+            Завершено:
+            <InputCheckbox @bind-Value="createAction.IsCompleted"
+                           class="form-check-input" />
+        </div>
+
+
+        <button type="submit" class="btn btn-success">Создать</button>
+    </EditForm>
+</div>
+
+<a href="/ActionView"><i class="bi bi-backspace"></i></a>
+
+@code {
+    private CreateActionReturnModel createActionReturnModel =
+        new CreateActionReturnModel();
+    private CreateActionModel createAction =
+    new CreateActionModel();
+
+    private async Task CreateButtonClick()
+    {
+        try
+        {
+            string query =
+                "mutation{" +
+                "createAction(" +
+                    "title:\"" + createAction.Title + "\"," +
+                    "description:\"" + createAction.Description + "\"," +
+                    "cost:" + createAction.Cost + "," +
+                    "isCompleted:" + createAction.IsCompleted.ToString().ToLower() + "," +
+                "){" +
+                    "actionId,title" +
+                "}" +
+                "}";
+
+            string graphQLQueryType = "createAction";
+
+            var result = await Mutation.ExceuteMutationAsyn<CreateActionReturnModel>(
+                graphQLQueryType, query);
+
+            createActionReturnModel = result;
+            NavigationManager.NavigateTo("ActionView");
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}
